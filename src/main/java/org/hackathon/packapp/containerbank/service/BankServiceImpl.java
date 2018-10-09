@@ -62,7 +62,21 @@ public class BankServiceImpl implements BankService {
     @Override
     @Transactional(readOnly = true)
     public Collection<CardType> findCardTypes() throws DataAccessException {
-        return cardRepository.findCardTypes();
+    	
+    	CloseableHttpClient httpclient = HttpClients.createDefault();
+    	HttpGet httpGet = new HttpGet("http://localhost:9093/cardtype");
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	Collection<CardType> cardtypelist = null;
+    	try {
+    		logger.debug("Sending request to card back");
+			CloseableHttpResponse cardsResponse = httpclient.execute(httpGet);
+			cardtypelist = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<List<CardType>>() { });
+    	} catch (IOException e) {
+			logger.error("Impossible de contacter le backend card");
+			e.printStackTrace();
+		}
+    	
+        return cardtypelist;
     }
 
     @Override
@@ -157,7 +171,9 @@ public class BankServiceImpl implements BankService {
     @Transactional
     public void saveCard(Card card) {
         
-    	if(findCardById(card.getId())==null) {
+    	System.out.println("------- Ca passe --------");
+    	
+    	if(card.getId()==null || findCardById(card.getId())==null) {
 
     		// POST
     		
@@ -179,6 +195,8 @@ public class BankServiceImpl implements BankService {
 				e1.printStackTrace();
 			} catch (JsonProcessingException e1) {
 				e1.printStackTrace();
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
     		
     	} else {
@@ -197,6 +215,8 @@ public class BankServiceImpl implements BankService {
 	    			card = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<Card>() { });
 	        	} catch (IOException e) {
 	    			logger.error("Impossible de contacter le backend card");
+				} catch (Exception e1) {
+					e1.printStackTrace();
 	    		}
 				
 			} catch (UnsupportedEncodingException e1) {
