@@ -58,4 +58,9 @@ public class Advisor extends Person {
         getSpecialtiesInternal().add(specialty);
     }
 
+	public Advisor() {
+	}
+    
+    
+
 }

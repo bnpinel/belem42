@@ -1,22 +1,33 @@
 
 package org.hackathon.packapp.containerbank.service;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.hackathon.packapp.containerbank.model.Advisor;
+import org.hackathon.packapp.containerbank.model.Card;
+import org.hackathon.packapp.containerbank.model.CardType;
+import org.hackathon.packapp.containerbank.model.Customer;
+import org.hackathon.packapp.containerbank.model.Payment;
+import org.hackathon.packapp.containerbank.repository.AdvisorRepository;
+import org.hackathon.packapp.containerbank.repository.CardRepository;
+import org.hackathon.packapp.containerbank.repository.CustomerRepository;
+import org.hackathon.packapp.containerbank.repository.PaymentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
-import org.hackathon.packapp.containerbank.model.Customer;
-import org.hackathon.packapp.containerbank.model.Card;
-import org.hackathon.packapp.containerbank.model.CardType;
-import org.hackathon.packapp.containerbank.model.Advisor;
-import org.hackathon.packapp.containerbank.model.Payment;
-import org.hackathon.packapp.containerbank.repository.CustomerRepository;
-import org.hackathon.packapp.containerbank.repository.CardRepository;
-import org.hackathon.packapp.containerbank.repository.AdvisorRepository;
-import org.hackathon.packapp.containerbank.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Mostly used as a facade for all ContainerBank controllers
@@ -32,6 +43,9 @@ public class BankServiceImpl implements BankService {
     private CustomerRepository customerRepository;
     private PaymentRepository paymentRepository;
 
+	final Logger logger = LoggerFactory.getLogger(BankServiceImpl.class);
+
+    
     @Autowired
     public BankServiceImpl(CardRepository cardRepository, AdvisorRepository advisorRepository, CustomerRepository customerRepository, PaymentRepository paymentRepository) {
         this.cardRepository = cardRepository;
@@ -88,7 +102,19 @@ public class BankServiceImpl implements BankService {
     @Transactional(readOnly = true)
     @Cacheable(value = "advisors")
     public Collection<Advisor> findAdvisors() throws DataAccessException {
-        return advisorRepository.findAll();
+    	logger.debug("entering find avisors");
+    	CloseableHttpClient httpclient = HttpClients.createDefault();
+    	HttpGet httpGet = new HttpGet("http://localhost:9090/advisor");
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	Collection<Advisor> advisors = null;
+    	try {
+    		logger.debug("Sending request to advisor back");
+			CloseableHttpResponse advisorsResponse = httpclient.execute(httpGet);
+	    	advisors = objectMapper.readValue(advisorsResponse.getEntity().getContent(), new TypeReference<List<Advisor>>() { });
+    	} catch (IOException e) {
+			logger.error("Impossible de contacter le backend advisor");
+		}
+    	return advisors;
     }
 
 	@Override
