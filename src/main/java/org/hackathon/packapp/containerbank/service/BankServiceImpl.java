@@ -3,9 +3,12 @@ package org.hackathon.packapp.containerbank.service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -13,6 +16,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 import org.hackathon.packapp.containerbank.model.Advisor;
 import org.hackathon.packapp.containerbank.model.Card;
 import org.hackathon.packapp.containerbank.model.CardType;
@@ -81,7 +85,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     @Transactional(readOnly = true)
-    public Customer findCustomerById(int id) throws DataAccessException {
+    public Customer findCustomerById(final int id) {
     	final CloseableHttpClient httpclient = HttpClients.createDefault();
     	final HttpGet httpGet = new HttpGet("http://localhost:9091/customers/" + id);    	
     	final ObjectMapper objectMapper = new ObjectMapper();
@@ -117,24 +121,25 @@ public class BankServiceImpl implements BankService {
 
     @Override
     @Transactional
-    public void saveCustomer(final Customer customer) {
-    	final CloseableHttpClient httpclient = HttpClients.createDefault();
+    public void saveCustomer(Customer customer) {
+    	final Header header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+    	final List<Header> headers = Arrays.asList(new Header[] {header});
+    	final CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).build();
     	final ObjectMapper objectMapper = new ObjectMapper();
     	final String url = "http://localhost:9091/customers/";
     	
     	try {
 	    	// update
-    		Customer response = null;
-	    	if(customer.getId() != null && findCustomerById(customer.getId()) != null) {
+	    	if(customer.getId() != null) {
 	    		final HttpPut httpRequest = new HttpPut(url + customer.getId());
 	    		httpRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(customer)));
 	    		CloseableHttpResponse customerResponse = httpclient.execute(httpRequest);
-	    		response = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
 	    	} else { // create
 	    		final HttpPost httpRequest = new HttpPost(url);
 	    		httpRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(customer)));
 	    		CloseableHttpResponse customerResponse = httpclient.execute(httpRequest);
-	    		response = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
 	    	}
     	} catch(final IOException ioe) {
     		logger.error("Impossible de contacter le backend customer.");

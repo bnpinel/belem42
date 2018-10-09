@@ -20,7 +20,7 @@ public interface BankService {
 
     Collection<CardType> findCardTypes() throws DataAccessException;
 
-    Customer findCustomerById(int id) throws DataAccessException;
+    Customer findCustomerById(int id);
 
     Card findCardById(int id);
 
@@ -30,7 +30,7 @@ public interface BankService {
 
     Collection<Advisor> findAdvisors() throws DataAccessException;
 
-    void saveCustomer(Customer customer) throws DataAccessException;
+    void saveCustomer(Customer customer);
 
     Collection<Customer> findCustomerByLastName(String lastName);
 
