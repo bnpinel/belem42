@@ -141,7 +141,7 @@ public class BankServiceImpl implements BankService {
     		//PUT
     		
         	CloseableHttpClient httpclient = HttpClients.createDefault();
-        	HttpPut httpPut = new HttpPut("http://localhost:9093/card");
+        	HttpPut httpPut = new HttpPut("http://localhost:9093/card/" + card.getId());
         	ObjectMapper objectMapper = new ObjectMapper();
         	try {
         		httpPut.setEntity(new StringEntity(objectMapper.writeValueAsString(card)));
