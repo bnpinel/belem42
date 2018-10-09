@@ -126,7 +126,9 @@ public class BankServiceImpl implements BankService {
     @Transactional
     public void saveCard(Card card) {
         
-    	if(findCardById(card.getId())==null) {
+    	System.out.println("------- Ca passe --------");
+    	
+    	if(card.getId()==null || findCardById(card.getId())==null) {
 
     		// POST
     		
@@ -148,6 +150,8 @@ public class BankServiceImpl implements BankService {
 				e1.printStackTrace();
 			} catch (JsonProcessingException e1) {
 				e1.printStackTrace();
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
     		
     	} else {
@@ -166,6 +170,8 @@ public class BankServiceImpl implements BankService {
 	    			card = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<Card>() { });
 	        	} catch (IOException e) {
 	    			logger.error("Impossible de contacter le backend card");
+				} catch (Exception e1) {
+					e1.printStackTrace();
 	    		}
 				
 			} catch (UnsupportedEncodingException e1) {
