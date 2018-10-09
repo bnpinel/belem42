@@ -89,7 +89,18 @@ public class BankServiceImpl implements BankService {
     @Override
     @Transactional(readOnly = true)
     public Card findCardById(int id) throws DataAccessException {
-        return cardRepository.findById(id);
+    	CloseableHttpClient httpclient = HttpClients.createDefault();
+    	HttpGet httpGet = new HttpGet("http://localhost:9093/card/" + id);
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	Card card = null;
+    	try {
+    		logger.debug("Sending request to advisor back");
+			CloseableHttpResponse advisorsResponse = httpclient.execute(httpGet);
+			card = objectMapper.readValue(advisorsResponse.getEntity().getContent(), new TypeReference<Card>() { });
+    	} catch (IOException e) {
+			logger.error("Impossible de contacter le backend advisor");
+		}
+    	return card;
     }
 
     @Override
