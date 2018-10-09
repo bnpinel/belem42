@@ -73,6 +73,7 @@ public class BankServiceImpl implements BankService {
 			cardtypelist = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<List<CardType>>() { });
     	} catch (IOException e) {
 			logger.error("Impossible de contacter le backend card");
+			e.printStackTrace();
 		}
     	
         return cardtypelist;
