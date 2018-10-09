@@ -22,7 +22,7 @@ public interface BankService {
 
     Customer findCustomerById(int id) throws DataAccessException;
 
-    Card findCardById(int id) throws DataAccessException;
+    Card findCardById(int id);
 
     void saveCard(Card card);
 

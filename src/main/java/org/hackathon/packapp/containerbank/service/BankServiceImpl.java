@@ -93,7 +93,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     @Transactional(readOnly = true)
-    public Card findCardById(int id) throws DataAccessException {
+    public Card findCardById(int id) {
     	CloseableHttpClient httpclient = HttpClients.createDefault();
     	HttpGet httpGet = new HttpGet("http://localhost:9093/card/" + id);
     	ObjectMapper objectMapper = new ObjectMapper();
