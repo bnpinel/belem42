@@ -1,4 +1,12 @@
-# Bienvenue au Hackathon PackApp !
+# Application Hackathon PackApp de l'équipe Belem42 !
+
+## Pourquoi Belem42
+
+Bah c'est simple, le Belem est l'ancêtre des portes conteneurs actuels, donc l'ancêtre des orchestrateur Docker. Et 42 parce que c'est la réponse à la question. 
+
+<img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme/belem.png"
+     alt="Le Belem"
+     width="50%" />
 
 L’objectif principal est de conteneuriser et API-ser l’application containerbank afin de pouvoir la déployer sur le CaaS AWS. Vous l'avez compris, vous devrez découper l'application de la plus belle façon qui soit . Consignes générales : 
 - :heavy_check_mark: **L’application doit être fonctionnelle**, c’est-à-dire couvrir tous les use cases exposés ci-après
