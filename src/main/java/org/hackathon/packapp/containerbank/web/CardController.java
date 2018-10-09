@@ -38,7 +38,7 @@ public class CardController {
     }
 
     @ModelAttribute("customer")
-    public Customer findCustomer(@PathVariable("customerId") int customerId) {
+    public Customer findCustomer(@PathVariable("customerId") String customerId) {
         return this.bankService.findCustomerById(customerId);
     }
 

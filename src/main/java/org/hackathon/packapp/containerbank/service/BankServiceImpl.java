@@ -85,7 +85,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     @Transactional(readOnly = true)
-    public Customer findCustomerById(final int id) {
+    public Customer findCustomerById(final String id) {
     	final CloseableHttpClient httpclient = HttpClients.createDefault();
     	final HttpGet httpGet = new HttpGet("http://localhost:9091/customers/" + id);    	
     	final ObjectMapper objectMapper = new ObjectMapper();
@@ -121,7 +121,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     @Transactional
-    public void saveCustomer(Customer customer) {
+    public String saveCustomer(Customer customer) {
     	final Header header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");
     	final List<Header> headers = Arrays.asList(new Header[] {header});
     	final CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).build();
@@ -145,6 +145,7 @@ public class BankServiceImpl implements BankService {
     		logger.error("Impossible de contacter le backend customer.");
     		ioe.printStackTrace();
     	}
+    	return customer.getId();
     }
 
 
@@ -178,7 +179,7 @@ public class BankServiceImpl implements BankService {
         
     	System.out.println("------- Ca passe --------");
     	
-    	if(card.getId()==null || findCardById(card.getId())==null) {
+    	if(card.getId()==null) {
 
     		// POST
     		

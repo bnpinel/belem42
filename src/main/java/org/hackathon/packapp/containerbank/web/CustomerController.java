@@ -51,8 +51,8 @@ public class CustomerController {
         if (result.hasErrors()) {
             return VIEWS_customer_CREATE_OR_UPDATE_FORM;
         } else {
-            this.bankService.saveCustomer(customer);
-            return "redirect:/customers/" + customer.getId();
+            final String id = this.bankService.saveCustomer(customer);
+            return "redirect:/customers/" + id;
         }
     }
 
@@ -88,14 +88,14 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "/customers/{customerId}/edit", method = RequestMethod.GET)
-    public String initUpdateCustomerForm(@PathVariable("customerId") int customerId, Model model) {
+    public String initUpdateCustomerForm(@PathVariable("customerId") String customerId, Model model) {
         Customer customer = this.bankService.findCustomerById(customerId);
         model.addAttribute(customer);
         return VIEWS_customer_CREATE_OR_UPDATE_FORM;
     }
 
     @RequestMapping(value = "/customers/{customerId}/edit", method = RequestMethod.POST)
-    public String processUpdateCustomerForm(@Valid Customer customer, BindingResult result, @PathVariable("customerId") int customerId) {
+    public String processUpdateCustomerForm(@Valid Customer customer, BindingResult result, @PathVariable("customerId") String customerId) {
         if (result.hasErrors()) {
             return VIEWS_customer_CREATE_OR_UPDATE_FORM;
         } else {
@@ -112,7 +112,7 @@ public class CustomerController {
      * @return a ModelMap with the model attributes for the view
      */
     @RequestMapping("/customers/{customerId}")
-    public ModelAndView showCustomer(@PathVariable("customerId") int customerId) {
+    public ModelAndView showCustomer(@PathVariable("customerId") String customerId) {
         ModelAndView mav = new ModelAndView("customers/customerDetails");
         mav.addObject(this.bankService.findCustomerById(customerId));
         return mav;
