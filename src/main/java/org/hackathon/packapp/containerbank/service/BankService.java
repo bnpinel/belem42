@@ -32,7 +32,7 @@ public interface BankService {
 
     void saveCustomer(Customer customer) throws DataAccessException;
 
-    Collection<Customer> findCustomerByLastName(String lastName) throws DataAccessException;
+    Collection<Customer> findCustomerByLastName(String lastName);
 
 	Collection<Payment> findPaymentsByCardId(int cardId);
 

@@ -68,19 +68,64 @@ public class BankServiceImpl implements BankService {
     @Override
     @Transactional(readOnly = true)
     public Customer findCustomerById(int id) throws DataAccessException {
-        return customerRepository.findById(id);
+    	final CloseableHttpClient httpclient = HttpClients.createDefault();
+    	final HttpGet httpGet = new HttpGet("http://localhost:9091/customers/" + id);    	
+    	final ObjectMapper objectMapper = new ObjectMapper();
+    	Customer customer = null;
+    	try {
+    		logger.debug("Sending request to customers back");
+			CloseableHttpResponse customerResponse = httpclient.execute(httpGet);
+			customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+    	} catch (IOException e) {
+			logger.error("Impossible de contacter le backend customers");
+			e.printStackTrace();
+		}
+    	return customer;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<Customer> findCustomerByLastName(String lastName) throws DataAccessException {
-        return customerRepository.findByLastName(lastName);
+    public Collection<Customer> findCustomerByLastName(String lastName) {
+    	final CloseableHttpClient httpclient = HttpClients.createDefault();
+    	final HttpGet httpGet = new HttpGet("http://localhost:9091/customers/?name=" + lastName);
+    	final ObjectMapper objectMapper = new ObjectMapper();
+    	Collection<Customer> customers = null;
+    	try {
+    		logger.debug("Sending request to customers back");
+			CloseableHttpResponse customersResponse = httpclient.execute(httpGet);
+			customers = objectMapper.readValue(customersResponse.getEntity().getContent(), new TypeReference<Collection<Customer>>() { });
+    	} catch (IOException e) {
+			logger.error("Impossible de contacter le backend customers");
+			e.printStackTrace();
+		}
+    	return customers;
     }
 
     @Override
     @Transactional
-    public void saveCustomer(Customer customer) throws DataAccessException {
-        customerRepository.save(customer);
+    public void saveCustomer(final Customer customer) {
+    	final CloseableHttpClient httpclient = HttpClients.createDefault();
+    	final ObjectMapper objectMapper = new ObjectMapper();
+    	final String url = "http://localhost:9091/customers/";
+    	
+    	try {
+	    	// update
+    		Customer response = null;
+	    	if(customer.getId() != null && findCustomerById(customer.getId()) != null) {
+	    		final HttpPut httpRequest = new HttpPut(url + customer.getId());
+	    		httpRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(customer)));
+	    		CloseableHttpResponse customerResponse = httpclient.execute(httpRequest);
+	    		response = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    	} else { // create
+	    		final HttpPost httpRequest = new HttpPost(url);
+	    		httpRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(customer)));
+	    		CloseableHttpResponse customerResponse = httpclient.execute(httpRequest);
+	    		response = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    	}
+    	} catch(final IOException ioe) {
+    		logger.error("Impossible de contacter le backend customer.");
+    		ioe.printStackTrace();
+    	}
     }
 
 
