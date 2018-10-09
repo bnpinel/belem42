@@ -2,11 +2,15 @@
 package org.hackathon.packapp.containerbank.service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.hackathon.packapp.containerbank.model.Advisor;
@@ -26,6 +30,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -94,19 +99,69 @@ public class BankServiceImpl implements BankService {
     	ObjectMapper objectMapper = new ObjectMapper();
     	Card card = null;
     	try {
-    		logger.debug("Sending request to advisor back");
-			CloseableHttpResponse advisorsResponse = httpclient.execute(httpGet);
-			card = objectMapper.readValue(advisorsResponse.getEntity().getContent(), new TypeReference<Card>() { });
+    		logger.debug("Sending request to card back");
+			CloseableHttpResponse cardsResponse = httpclient.execute(httpGet);
+			card = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<Card>() { });
     	} catch (IOException e) {
-			logger.error("Impossible de contacter le backend advisor");
+			logger.error("Impossible de contacter le backend card");
 		}
     	return card;
     }
 
     @Override
     @Transactional
-    public void saveCard(Card card) throws DataAccessException {
-        cardRepository.save(card);
+    public void saveCard(Card card) {
+        
+    	if(findCardById(card.getId())==null) {
+
+    		// POST
+    		
+        	CloseableHttpClient httpclient = HttpClients.createDefault();
+        	HttpPost httpPost = new HttpPost("http://localhost:9093/card");
+        	ObjectMapper objectMapper = new ObjectMapper();
+        	try {
+        		httpPost.setEntity(new StringEntity(objectMapper.writeValueAsString(card)));
+				
+	        	try {
+	        		logger.debug("Sending request to card back");
+	    			CloseableHttpResponse cardsResponse = httpclient.execute(httpPost);
+	    			card = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<Card>() { });
+	        	} catch (IOException e) {
+	    			logger.error("Impossible de contacter le backend card");
+	    		}
+				
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			} catch (JsonProcessingException e1) {
+				e1.printStackTrace();
+			}
+    		
+    	} else {
+    		
+    		//PUT
+    		
+        	CloseableHttpClient httpclient = HttpClients.createDefault();
+        	HttpPut httpPut = new HttpPut("http://localhost:9093/card");
+        	ObjectMapper objectMapper = new ObjectMapper();
+        	try {
+        		httpPut.setEntity(new StringEntity(objectMapper.writeValueAsString(card)));
+				
+	        	try {
+	        		logger.debug("Sending request to card back");
+	    			CloseableHttpResponse cardsResponse = httpclient.execute(httpPut);
+	    			card = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<Card>() { });
+	        	} catch (IOException e) {
+	    			logger.error("Impossible de contacter le backend card");
+	    		}
+				
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			} catch (JsonProcessingException e1) {
+				e1.printStackTrace();
+			}
+    		
+    	}
+        
     }
 
     @Override

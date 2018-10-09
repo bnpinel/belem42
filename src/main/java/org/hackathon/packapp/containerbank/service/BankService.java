@@ -24,7 +24,7 @@ public interface BankService {
 
     Card findCardById(int id) throws DataAccessException;
 
-    void saveCard(Card card) throws DataAccessException;
+    void saveCard(Card card);
 
     void savePayment(Payment payment) throws DataAccessException;
 
