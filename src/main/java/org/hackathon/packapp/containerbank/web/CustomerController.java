@@ -69,25 +69,20 @@ public class CustomerController {
         if (customer.getLastName() == null) {
             customer.setLastName(""); // empty string signifies broadest possible search
         }
-
-        System.out.println("#################");
         
         // find customers by last name
         Collection<Customer> results = this.bankService.findCustomerByLastName(customer.getLastName());
         if (results.isEmpty()) {
             // no customers found
             result.rejectValue("lastName", "notFound", "not found");
-            System.out.println("#################1");
             return "customers/findCustomers";
         } else if (results.size() == 1) {
             // 1 customer found
             customer = results.iterator().next();
-            System.out.println("#################2");
             return "redirect:/customers/" + customer.getId();
         } else {
             // multiple customers found
             model.put("selections", results);
-            System.out.println("#################3");
             return "customers/customersList";
         }
     }

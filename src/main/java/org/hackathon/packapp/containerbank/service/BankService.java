@@ -22,7 +22,7 @@ public interface BankService {
 
     Customer findCustomerById(String id);
 
-    Card findCardById(int id);
+    Card findCardById(String id);
 
     void saveCard(Card card);
 
@@ -34,6 +34,6 @@ public interface BankService {
 
     Collection<Customer> findCustomerByLastName(String lastName);
 
-	Collection<Payment> findPaymentsByCardId(int cardId);
+	Collection<Payment> findPaymentsByCardId(String cardId);
 
 }

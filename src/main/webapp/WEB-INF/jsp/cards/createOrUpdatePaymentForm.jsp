@@ -28,7 +28,7 @@
             </thead>
             <tr>
                 <td><c:out value="${payment.card.name}"/></td>
-                <td><containerbank:localDate date="${payment.card.birthDate}" pattern="yyyy/MM/dd"/></td>
+                <td><c:out value="${payment.card.birthDate}"/></td>
                 <td><c:out value="${payment.card.type.name}"/></td>
                 <td><c:out value="${payment.card.customer.firstName} ${payment.card.customer.lastName}"/></td>
             </tr>

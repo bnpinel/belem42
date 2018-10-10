@@ -77,7 +77,7 @@ public class CardController {
     }
 
     @RequestMapping(value = "/cards/{cardId}/edit", method = RequestMethod.GET)
-    public String initUpdateForm(@PathVariable("cardId") int cardId, ModelMap model) {
+    public String initUpdateForm(@PathVariable("cardId") String cardId, ModelMap model) {
         Card card = this.bankService.findCardById(cardId);
         model.put("card", card);
         return VIEWS_cards_CREATE_OR_UPDATE_FORM;
