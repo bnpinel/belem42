@@ -58,7 +58,7 @@
             <c:forEach var="payment" items="${payment.card.payments}">
                 <c:if test="${!payment['new']}">
                     <tr>
-                        <td><containerbank:localDate date="${payment.date}" pattern="yyyy/MM/dd"/></td>
+                        <td><c:out value="${payment.date}"/></td>
                         <td><c:out value="${payment.description}"/></td>
                     </tr>
                 </c:if>

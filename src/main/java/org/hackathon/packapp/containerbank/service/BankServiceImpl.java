@@ -286,6 +286,11 @@ public class BankServiceImpl implements BankService {
 				
 				if (card.getPaymentIDList()==null) card.setPaymentIDList(new ArrayList<String>());
 				card.getPaymentIDList().add(paymentID);
+				card.setCardTypeID(card.getType().getId());
+				card.setCustomerID(card.getCustomer().getId());
+				card.setType(null);
+				card.setCustomer(null);
+				card.setPayments(null);
 				saveCard(card);
 			}
     			
@@ -311,6 +316,51 @@ public class BankServiceImpl implements BankService {
 			logger.error("Impossible de contacter le backend card");
 			e.printStackTrace();
 		}
+
+		// Populate object with CardType
+		HttpGet httpGetTypeCard = new HttpGet(this.cardUrl+"/cardtype/" + card.getCardTypeID());
+    	ObjectMapper objectMapperCardType = new ObjectMapper();
+    	CardType cardType = null;
+    	try {
+    		logger.debug("Sending request to card back");
+			CloseableHttpResponse cardTypeResponse = httpclient.execute(httpGetTypeCard);
+			
+			if (cardTypeResponse.getStatusLine().getStatusCode()==200) {
+				cardType = objectMapperCardType.readValue(cardTypeResponse.getEntity().getContent(), new TypeReference<CardType>() { });
+				card.setType(cardType);
+			}
+			
+    	} catch (IOException e) {
+			logger.error("Impossible de contacter le backend card");
+			e.printStackTrace();
+		}
+    	
+    	//Populate Customer
+    	card.setCustomer(findCustomerById(card.getCustomerID()));
+    	
+    	if (card.getPaymentIDList()!=null) {
+        	for (Iterator<String> iterator = card.getPaymentIDList().iterator(); iterator.hasNext();) {
+    			String paymentID = (String) iterator.next();
+   			
+    			HttpGet httpGetpayments = new HttpGet(this.paymentUrl+"/payment/" + paymentID);
+    	    	ObjectMapper objectMapperpayments = new ObjectMapper();
+    	    	
+    	    	try {
+    	    		logger.debug("Sending request to payments back");
+    				CloseableHttpResponse paymentsResponse = httpclient.execute(httpGetpayments);
+     				
+    				if(paymentsResponse.getStatusLine().getStatusCode() == 200) {
+    					Payment payment = objectMapperpayments.readValue(paymentsResponse.getEntity().getContent(), new TypeReference<Payment>() { });
+    					card.addPayment(payment);
+    				}
+    				
+    	    	} catch (IOException e) {
+    				logger.error("Impossible de contacter le backend payments");
+    				e.printStackTrace();
+    			}			
+    		}    		
+    	}
+    	
     	return card;
     }
 
@@ -411,35 +461,7 @@ public class BankServiceImpl implements BankService {
 	public Collection<Payment> findPaymentsByCardId(String cardId) {
 		
 		Card card = findCardById(cardId);
-		List<Payment> payments = new ArrayList<Payment>();
-		
-		for (Iterator<String> iterator = card.getPaymentIDList().iterator(); iterator.hasNext();) {
-			String paymentID = (String) iterator.next();
-			
-			CloseableHttpClient httpclient = HttpClients.createDefault();
-			HttpGet httpGetpayments = new HttpGet(this.paymentUrl+"/payment/" + paymentID);
-	    	ObjectMapper objectMapperpayments = new ObjectMapper();
-	    	
-	    	try {
-	    		logger.debug("Sending request to payments back");
-				CloseableHttpResponse paymentsResponse = httpclient.execute(httpGetpayments);
-				
-				if(paymentsResponse.getStatusLine().getStatusCode() != 200) {
-					Payment payment = objectMapperpayments.readValue(paymentsResponse.getEntity().getContent(), new TypeReference<Payment>() { });
-					payments.add(payment);
-				}
-				
-	    	} catch (IOException e) {
-				logger.error("Impossible de contacter le backend payments");
-				e.printStackTrace();
-			}			
-			
-		}
-		
-		
-
-		
-		return payments;
+		return card.getPayments();
 	}
 
 
