@@ -139,7 +139,7 @@ public class BankServiceImpl implements BankService {
     			System.out.println("    card.getId() = " + card.getId() );
     			
     			// Populate object with CardType
-    			HttpGet httpGetTypeCard = new HttpGet("http://localhost:9093/cardtype/" + card.getCardTypeID());
+    			HttpGet httpGetTypeCard = new HttpGet(this.cardUrl+"/cardtype/" + card.getCardTypeID());
 		    	ObjectMapper objectMapperCardType = new ObjectMapper();
 		    	CardType cardType = null;
 		    	try {
@@ -159,7 +159,7 @@ public class BankServiceImpl implements BankService {
     			
     			
 		    	// Populate object with payments
-		    	HttpGet httpGetpayments = new HttpGet("http://localhost:9092/payment/card/" + card.getId());
+		    	HttpGet httpGetpayments = new HttpGet(this.paymentUrl+"/payment/card/" + card.getId());
 		    	ObjectMapper objectMapperpayments = new ObjectMapper();
 		    	Collection<Payment> payments = null;
 		    	try {
@@ -243,7 +243,7 @@ public class BankServiceImpl implements BankService {
     	final List<Header> headers = Arrays.asList(new Header[] {header});
     	final CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).build();
     	final ObjectMapper objectMapper = new ObjectMapper();
-    	final String url = "http://localhost:9092/payment/";
+    	final String url = this.paymentUrl+"/payment/";
     	
     	try {
 	    	if(payment.getId() != null) { // update
@@ -384,7 +384,7 @@ public class BankServiceImpl implements BankService {
 	@Override
 	public Collection<Payment> findPaymentsByCardId(int cardId) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
-		HttpGet httpGetpayments = new HttpGet("http://localhost:9092/payment/card/" + cardId);
+		HttpGet httpGetpayments = new HttpGet(this.paymentUrl+"/payment/card/" + cardId);
     	ObjectMapper objectMapperpayments = new ObjectMapper();
     	Collection<Payment> payments = null;
     	try {
