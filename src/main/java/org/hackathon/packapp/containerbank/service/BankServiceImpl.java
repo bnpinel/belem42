@@ -137,6 +137,7 @@ public class BankServiceImpl implements BankService {
     			Card card = iterator.next();
     			
     			System.out.println("    card.getId() = " + card.getId() );
+    			System.out.println("    card.getCardTypeID() = " + card.getCardTypeID() );
     			
     			// Populate object with CardType
     			HttpGet httpGetTypeCard = new HttpGet(this.cardUrl+"/cardtype/" + card.getCardTypeID());
@@ -149,7 +150,7 @@ public class BankServiceImpl implements BankService {
 					if (cardTypeResponse.getStatusLine().getStatusCode()==200) {
 						cardType = objectMapperCardType.readValue(cardTypeResponse.getEntity().getContent(), new TypeReference<CardType>() { });
 						card.setType(cardType);
-						System.out.println("    card.setType(cardType) ");
+						//System.out.println("    card.setType(cardType) " + cardType.getName());
 					}
 					
 		    	} catch (IOException e) {
@@ -302,6 +303,9 @@ public class BankServiceImpl implements BankService {
     	if(card.getId()==null || card.getId().trim().equals("")) {
 
     		card.setId(null); // Le front envoie parfois ""
+    		
+    		if (card.getCardTypeID()==null) card.setCardTypeID(card.getType().getId());
+    		
     		
     		// POST
     		
