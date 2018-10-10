@@ -16,8 +16,6 @@ import java.time.LocalDate;
  *
  * @author Wavestone
  */
-@Entity
-@Table(name = "payments")
 public class Payment extends BaseEntity {
 
     /**
@@ -37,8 +35,6 @@ public class Payment extends BaseEntity {
     /**
      * Holds value of property card.
      */
-    @ManyToOne
-    @JoinColumn(name = "card_id")
     private Card card;
 
 

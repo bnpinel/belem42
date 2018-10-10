@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.Header;
@@ -98,6 +99,28 @@ public class BankServiceImpl implements BankService {
 			logger.error("Impossible de contacter le backend customers");
 			e.printStackTrace();
 		}
+    	
+    	// Populate object with cards
+    	HttpGet httpGetCards = new HttpGet("http://localhost:9093/card/customer/" + id);
+    	ObjectMapper objectMapperCards = new ObjectMapper();
+    	Collection<Card> cards = null;
+    	try {
+    		logger.debug("Sending request to card back");
+			CloseableHttpResponse cardsResponse = httpclient.execute(httpGetCards);
+			cards = objectMapperCards.readValue(cardsResponse.getEntity().getContent(), new TypeReference<List<Card>>() { });
+    	} catch (IOException e) {
+			logger.error("Impossible de contacter le backend card");
+			e.printStackTrace();
+		}
+    	
+    	if (cards!=null && !cards.isEmpty()) {
+    		for (Iterator<Card> iterator = cards.iterator(); iterator.hasNext();) {
+				customer.addCard(iterator.next());
+			}
+    	}
+    	
+    	
+    	
     	return customer;
     }
 
@@ -169,6 +192,7 @@ public class BankServiceImpl implements BankService {
 			card = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<Card>() { });
     	} catch (IOException e) {
 			logger.error("Impossible de contacter le backend card");
+			e.printStackTrace();
 		}
     	return card;
     }
@@ -176,25 +200,32 @@ public class BankServiceImpl implements BankService {
     @Override
     @Transactional
     public void saveCard(Card card) {
-        
-    	System.out.println("------- Ca passe --------");
+   	
+    	final Header header = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+    	final List<Header> headers = Arrays.asList(new Header[] {header});
+    	final CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).build();
     	
-    	if(card.getId()==null) {
+    	if(card.getId()==null || card.getId().trim().equals("")) {
 
     		// POST
     		
-        	CloseableHttpClient httpclient = HttpClients.createDefault();
         	HttpPost httpPost = new HttpPost("http://localhost:9093/card");
         	ObjectMapper objectMapper = new ObjectMapper();
         	try {
+     		
         		httpPost.setEntity(new StringEntity(objectMapper.writeValueAsString(card)));
 				
 	        	try {
 	        		logger.debug("Sending request to card back");
 	    			CloseableHttpResponse cardsResponse = httpclient.execute(httpPost);
-	    			card = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<Card>() { });
+	    			
+	    			if(cardsResponse.getStatusLine().getStatusCode() != 201) {
+		    			logger.error("Impossible de contacter le backend card (HTTP " + cardsResponse.getStatusLine().getStatusCode() + ")");
+	    			}
+	    			
 	        	} catch (IOException e) {
 	    			logger.error("Impossible de contacter le backend card");
+	    			e.printStackTrace();
 	    		}
 				
 			} catch (UnsupportedEncodingException e1) {
@@ -209,7 +240,6 @@ public class BankServiceImpl implements BankService {
     		
     		//PUT
     		
-        	CloseableHttpClient httpclient = HttpClients.createDefault();
         	HttpPut httpPut = new HttpPut("http://localhost:9093/card/" + card.getId());
         	ObjectMapper objectMapper = new ObjectMapper();
         	try {
@@ -221,6 +251,7 @@ public class BankServiceImpl implements BankService {
 	    			card = objectMapper.readValue(cardsResponse.getEntity().getContent(), new TypeReference<Card>() { });
 	        	} catch (IOException e) {
 	    			logger.error("Impossible de contacter le backend card");
+	    			e.printStackTrace();
 				} catch (Exception e1) {
 					e1.printStackTrace();
 	    		}

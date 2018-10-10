@@ -1,19 +1,6 @@
 
 package org.hackathon.packapp.containerbank.model;
 
-import org.springframework.beans.support.MutableSortDefinition;
-import org.springframework.beans.support.PropertyComparator;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,55 +8,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.support.MutableSortDefinition;
+import org.springframework.beans.support.PropertyComparator;
+import org.springframework.format.annotation.DateTimeFormat;
+
 /**
  * Simple business object representing a card.
  *
  * @author Wavestone
  */
-@Entity
-@Table(name = "cards")
 public class Card extends NamedEntity {
 
-    @Column(name = "birth_date")
-    @DateTimeFormat(pattern = "yyyy/MM/dd")
-    private LocalDate birthDate;
+	@DateTimeFormat(pattern = "yyyy/MM/dd")
+    private String birthDate;
 
-    @ManyToOne
-    @JoinColumn(name = "type_id")
+    private String cardTypeID;
+
+    private String customerID;
+    
     private CardType type;
-
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
+    
     private Customer customer;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "card", fetch = FetchType.EAGER)
     private Set<Payment> payments;
 
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public LocalDate getBirthDate() {
-        return this.birthDate;
-    }
-
-    public CardType getType() {
-        return this.type;
-    }
-
-    public void setType(CardType type) {
-        this.type = type;
-    }
-
-    public Customer getCustomer() {
-        return this.customer;
-    }
-
-    protected void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
+    
     protected Set<Payment> getPaymentsInternal() {
         if (this.payments == null) {
             this.payments = new HashSet<>();
@@ -91,5 +54,52 @@ public class Card extends NamedEntity {
         getPaymentsInternal().add(payment);
         payment.setCard(this);
     }
+    
+    
 
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getBirthDate() {
+        return this.birthDate;
+    }
+
+	public String getCardTypeID() {
+		return cardTypeID;
+	}
+
+	public void setCardTypeID(String cardTypeID) {
+		this.cardTypeID = cardTypeID;
+	}
+
+	public String getCustomerID() {
+		return customerID;
+	}
+
+	public void setCustomerID(String customerID) {
+		this.customerID = customerID;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public void setPayments(Set<Payment> payments) {
+		this.payments = payments;
+	}
+
+	public CardType getType() {
+		return type;
+	}
+
+	public void setType(CardType type) {
+		this.type = type;
+	}
+
+	
 }

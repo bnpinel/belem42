@@ -24,8 +24,6 @@ import org.springframework.core.style.ToStringCreator;
  *
  * @author Wavestone
  */
-@Entity
-@Table(name = "customers")
 public class Customer extends Person {
     @Column(name = "address")
     @NotEmpty
@@ -40,7 +38,6 @@ public class Customer extends Person {
     @Digits(fraction = 0, integer = 10)
     private String telephone;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
     private Set<Card> cards;
 
 
@@ -87,7 +84,7 @@ public class Customer extends Person {
 
     public void addCard(Card card) {
         getCardsInternal().add(card);
-        card.setCustomer(this);
+        card.setCustomerID(this.getId());
     }
 
     /**
