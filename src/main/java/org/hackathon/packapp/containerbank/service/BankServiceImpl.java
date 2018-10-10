@@ -52,6 +52,13 @@ public class BankServiceImpl implements BankService {
     private AdvisorRepository advisorRepository;
     private CustomerRepository customerRepository;
     private PaymentRepository paymentRepository;
+    
+    private String paymentUrl = "http://localhost:9092";
+    private String advisorUrl = "http://localhost:9090";
+    private String customerUrl = "http://localhost:9091";
+    private String cardUrl = "http://localhost:9093";
+    
+    private final String BACK_URL = System.getenv("BACKEND_URL");
 
 	final Logger logger = LoggerFactory.getLogger(BankServiceImpl.class);
 
@@ -62,6 +69,17 @@ public class BankServiceImpl implements BankService {
         this.advisorRepository = advisorRepository;
         this.customerRepository = customerRepository;
         this.paymentRepository = paymentRepository;
+        if (BACK_URL == null) {
+        	this.paymentUrl = "http://localhost:9092";
+        	this.advisorUrl = "http://localhost:9090";
+        	this.customerUrl = "http://localhost:9091";
+        	this.cardUrl = "http://localhost:9093";
+        }else {
+        	this.paymentUrl = "http://belem42.hackathon-container.com";
+        	this.advisorUrl = "http://belem42.hackathon-container.com";
+        	this.customerUrl = "http://belem42.hackathon-container.com";
+        	this.cardUrl = "http://belem42.hackathon-container.com";
+        }
     }
 
     @Override
@@ -69,7 +87,7 @@ public class BankServiceImpl implements BankService {
     public Collection<CardType> findCardTypes() throws DataAccessException {
     	
     	CloseableHttpClient httpclient = HttpClients.createDefault();
-    	HttpGet httpGet = new HttpGet("http://localhost:9093/cardtype");
+    	HttpGet httpGet = new HttpGet(this.cardUrl+"/cardtype");
     	ObjectMapper objectMapper = new ObjectMapper();
     	Collection<CardType> cardtypelist = null;
     	try {
@@ -88,20 +106,26 @@ public class BankServiceImpl implements BankService {
     @Transactional(readOnly = true)
     public Customer findCustomerById(final String id) {
     	final CloseableHttpClient httpclient = HttpClients.createDefault();
-    	final HttpGet httpGet = new HttpGet("http://localhost:9091/customers/" + id);    	
+    	final HttpGet httpGet = new HttpGet(this.customerUrl+"/customers/" + id);    	
     	final ObjectMapper objectMapper = new ObjectMapper();
     	Customer customer = null;
     	try {
     		logger.debug("Sending request to customers back");
 			CloseableHttpResponse customerResponse = httpclient.execute(httpGet);
-			customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+			
+    		if (customerResponse.getStatusLine().getStatusCode()==200) {
+    			customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+    		} else {
+    			logger.error("Impossible de créer le customer (HTTP " + customerResponse.getStatusLine().getStatusCode() + ")");
+    		}
+			
     	} catch (IOException e) {
 			logger.error("Impossible de contacter le backend customers");
 			e.printStackTrace();
 		}
     	
     	// Populate object with cards
-    	HttpGet httpGetCards = new HttpGet("http://localhost:9093/card/customer/" + id);
+    	HttpGet httpGetCards = new HttpGet(this.cardUrl+"/card/customer/" + id);
     	ObjectMapper objectMapperCards = new ObjectMapper();
     	Collection<Card> cards = null;
     	try {
@@ -118,10 +142,8 @@ public class BankServiceImpl implements BankService {
 				
     			Card card = iterator.next();
     			
-    			System.out.println("    card.getId() = " + card.getId() );
-    			
     			// Populate object with CardType
-    			HttpGet httpGetTypeCard = new HttpGet("http://localhost:9093/cardtype/" + card.getCardTypeID());
+    			HttpGet httpGetTypeCard = new HttpGet(this.cardUrl+"/cardtype/" + card.getCardTypeID());
 		    	ObjectMapper objectMapperCardType = new ObjectMapper();
 		    	CardType cardType = null;
 		    	try {
@@ -131,7 +153,6 @@ public class BankServiceImpl implements BankService {
 					if (cardTypeResponse.getStatusLine().getStatusCode()==200) {
 						cardType = objectMapperCardType.readValue(cardTypeResponse.getEntity().getContent(), new TypeReference<CardType>() { });
 						card.setType(cardType);
-						System.out.println("    card.setType(cardType) ");
 					}
 					
 		    	} catch (IOException e) {
@@ -141,7 +162,7 @@ public class BankServiceImpl implements BankService {
     			
     			
 		    	// Populate object with payments
-		    	HttpGet httpGetpayments = new HttpGet("http://localhost:9092/payment/card/" + card.getId());
+		    	HttpGet httpGetpayments = new HttpGet(this.paymentUrl+"/payment/card/" + card.getId());
 		    	ObjectMapper objectMapperpayments = new ObjectMapper();
 		    	Collection<Payment> payments = null;
 		    	try {
@@ -174,17 +195,24 @@ public class BankServiceImpl implements BankService {
     @Transactional(readOnly = true)
     public Collection<Customer> findCustomerByLastName(String lastName) {
     	final CloseableHttpClient httpclient = HttpClients.createDefault();
-    	final HttpGet httpGet = new HttpGet("http://localhost:9091/customers/?name=" + lastName);
+    	final HttpGet httpGet = new HttpGet(this.customerUrl+"/customers/?name=" + lastName);
     	final ObjectMapper objectMapper = new ObjectMapper();
     	Collection<Customer> customers = null;
     	try {
     		logger.debug("Sending request to customers back");
 			CloseableHttpResponse customersResponse = httpclient.execute(httpGet);
-			customers = objectMapper.readValue(customersResponse.getEntity().getContent(), new TypeReference<Collection<Customer>>() { });
-    	} catch (IOException e) {
+			
+    		if (customersResponse.getStatusLine().getStatusCode()==200) {
+    			customers = objectMapper.readValue(customersResponse.getEntity().getContent(), new TypeReference<Collection<Customer>>() { });
+    		} else {
+    			logger.error("Impossible de créer le customer (HTTP " + customersResponse.getStatusLine().getStatusCode() + ")");
+    		}
+			
+   	} catch (IOException e) {
 			logger.error("Impossible de contacter le backend customers");
 			e.printStackTrace();
 		}
+    	
     	return customers;
     }
 
@@ -195,7 +223,7 @@ public class BankServiceImpl implements BankService {
     	final List<Header> headers = Arrays.asList(new Header[] {header});
     	final CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).build();
     	final ObjectMapper objectMapper = new ObjectMapper();
-    	final String url = "http://localhost:9091/customers/";
+    	final String url = this.customerUrl+"/customers/";
     	
     	try {
 	    	// update
@@ -203,12 +231,21 @@ public class BankServiceImpl implements BankService {
 	    		final HttpPut httpRequest = new HttpPut(url + customer.getId());
 	    		httpRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(customer)));
 	    		CloseableHttpResponse customerResponse = httpclient.execute(httpRequest);
-	    		customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		if (customerResponse.getStatusLine().getStatusCode()==200) {
+	    			customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		} else {
+	    			logger.error("Impossible de créer le customer (HTTP " + customerResponse.getStatusLine().getStatusCode() + ")");
+	    		}
 	    	} else { // create
 	    		final HttpPost httpRequest = new HttpPost(url);
 	    		httpRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(customer)));
 	    		CloseableHttpResponse customerResponse = httpclient.execute(httpRequest);
-	    		customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		
+	    		if (customerResponse.getStatusLine().getStatusCode()==201) {
+		    		customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		} else {
+	    			logger.error("Impossible de créer le customer (HTTP " + customerResponse.getStatusLine().getStatusCode() + ")");
+	    		}
 	    	}
     	} catch(final IOException ioe) {
     		logger.error("Impossible de contacter le backend customer.");
@@ -225,7 +262,7 @@ public class BankServiceImpl implements BankService {
     	final List<Header> headers = Arrays.asList(new Header[] {header});
     	final CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).build();
     	final ObjectMapper objectMapper = new ObjectMapper();
-    	final String url = "http://localhost:9092/payment/";
+    	final String url = this.paymentUrl+"/payment/";
     	
     	try {
 	    	if(payment.getId() != null) { // update
@@ -259,7 +296,7 @@ public class BankServiceImpl implements BankService {
     @Transactional(readOnly = true)
     public Card findCardById(int id) {
     	CloseableHttpClient httpclient = HttpClients.createDefault();
-    	HttpGet httpGet = new HttpGet("http://localhost:9093/card/" + id);
+    	HttpGet httpGet = new HttpGet(this.cardUrl+"/card/" + id);
     	ObjectMapper objectMapper = new ObjectMapper();
     	Card card = null;
     	try {
@@ -285,9 +322,12 @@ public class BankServiceImpl implements BankService {
 
     		card.setId(null); // Le front envoie parfois ""
     		
+    		if (card.getCardTypeID()==null) card.setCardTypeID(card.getType().getId());
+    		
+    		
     		// POST
     		
-        	HttpPost httpPost = new HttpPost("http://localhost:9093/card");
+        	HttpPost httpPost = new HttpPost(this.cardUrl+"/card");
         	ObjectMapper objectMapper = new ObjectMapper();
         	try {
      		
@@ -318,7 +358,7 @@ public class BankServiceImpl implements BankService {
     		
     		//PUT
     		
-        	HttpPut httpPut = new HttpPut("http://localhost:9093/card/" + card.getId());
+        	HttpPut httpPut = new HttpPut(this.cardUrl+"/card/" + card.getId());
         	ObjectMapper objectMapper = new ObjectMapper();
         	try {
         		httpPut.setEntity(new StringEntity(objectMapper.writeValueAsString(card)));
@@ -350,7 +390,7 @@ public class BankServiceImpl implements BankService {
     public Collection<Advisor> findAdvisors() throws DataAccessException {
     	logger.debug("entering find avisors");
     	CloseableHttpClient httpclient = HttpClients.createDefault();
-    	HttpGet httpGet = new HttpGet("http://localhost:9090/advisor");
+    	HttpGet httpGet = new HttpGet(this.advisorUrl + "/advisor");
     	ObjectMapper objectMapper = new ObjectMapper();
     	Collection<Advisor> advisors = null;
     	try {
@@ -366,7 +406,7 @@ public class BankServiceImpl implements BankService {
 	@Override
 	public Collection<Payment> findPaymentsByCardId(int cardId) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
-		HttpGet httpGetpayments = new HttpGet("http://localhost:9092/payment/card/" + cardId);
+		HttpGet httpGetpayments = new HttpGet(this.paymentUrl+"/payment/card/" + cardId);
     	ObjectMapper objectMapperpayments = new ObjectMapper();
     	Collection<Payment> payments = null;
     	try {
