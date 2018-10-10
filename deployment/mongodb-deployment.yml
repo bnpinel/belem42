@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: packapp04
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:3.6.8
+        ports:
+        - name: mongo
+          containerPort: 27017
+          hostPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: packapp04
+  labels:
+    name: mongo
+    app: mongodb
+spec:
+  selector:
+    name: mongo
+    app: mongodb
+    type: ClusterIP
+  ports:
+  - name: mongodb
+    port: 27017
+    targetPort: 27017

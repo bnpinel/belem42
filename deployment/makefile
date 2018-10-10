@@ -8,6 +8,12 @@ deploy-all:
 	kubectl create -f ../../back-payment/deployment/deployment.yml
 	kubectl create -f ./deployment.yml
 
+deploy-mongodb:
+	kubectl create -f ./mongodb-deployment.yml
+
+destroy-mongodb:
+	kubectl delete -f ./mongodb-deployment.yml
+
 destroy:
 	kubectl delete -f ./deployment.yml
 
