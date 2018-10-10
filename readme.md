@@ -12,6 +12,6 @@ mvn tomcat7:run-war
 ## Pourquoi Belem42 ?
 Bah... c'est simple, le Belem est un des premiers portes conteneurs, bien avant Mesos, Swarm ou Kubernetes ! Et 42 car c'est la réponse à la question.
 
- <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme/belem.png"
+ <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme_belem.png"
      alt="Le Belem"
      width="40%" />
