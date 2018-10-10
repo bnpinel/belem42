@@ -112,7 +112,13 @@ public class BankServiceImpl implements BankService {
     	try {
     		logger.debug("Sending request to customers back");
 			CloseableHttpResponse customerResponse = httpclient.execute(httpGet);
-			customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+			
+    		if (customerResponse.getStatusLine().getStatusCode()==200) {
+    			customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+    		} else {
+    			logger.error("Impossible de créer le customer (HTTP " + customerResponse.getStatusLine().getStatusCode() + ")");
+    		}
+			
     	} catch (IOException e) {
 			logger.error("Impossible de contacter le backend customers");
 			e.printStackTrace();
@@ -136,9 +142,6 @@ public class BankServiceImpl implements BankService {
 				
     			Card card = iterator.next();
     			
-    			System.out.println("    card.getId() = " + card.getId() );
-    			System.out.println("    card.getCardTypeID() = " + card.getCardTypeID() );
-    			
     			// Populate object with CardType
     			HttpGet httpGetTypeCard = new HttpGet(this.cardUrl+"/cardtype/" + card.getCardTypeID());
 		    	ObjectMapper objectMapperCardType = new ObjectMapper();
@@ -150,7 +153,6 @@ public class BankServiceImpl implements BankService {
 					if (cardTypeResponse.getStatusLine().getStatusCode()==200) {
 						cardType = objectMapperCardType.readValue(cardTypeResponse.getEntity().getContent(), new TypeReference<CardType>() { });
 						card.setType(cardType);
-						//System.out.println("    card.setType(cardType) " + cardType.getName());
 					}
 					
 		    	} catch (IOException e) {
@@ -199,11 +201,18 @@ public class BankServiceImpl implements BankService {
     	try {
     		logger.debug("Sending request to customers back");
 			CloseableHttpResponse customersResponse = httpclient.execute(httpGet);
-			customers = objectMapper.readValue(customersResponse.getEntity().getContent(), new TypeReference<Collection<Customer>>() { });
-    	} catch (IOException e) {
+			
+    		if (customersResponse.getStatusLine().getStatusCode()==200) {
+    			customers = objectMapper.readValue(customersResponse.getEntity().getContent(), new TypeReference<Collection<Customer>>() { });
+    		} else {
+    			logger.error("Impossible de créer le customer (HTTP " + customersResponse.getStatusLine().getStatusCode() + ")");
+    		}
+			
+   	} catch (IOException e) {
 			logger.error("Impossible de contacter le backend customers");
 			e.printStackTrace();
 		}
+    	
     	return customers;
     }
 
@@ -222,12 +231,21 @@ public class BankServiceImpl implements BankService {
 	    		final HttpPut httpRequest = new HttpPut(url + customer.getId());
 	    		httpRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(customer)));
 	    		CloseableHttpResponse customerResponse = httpclient.execute(httpRequest);
-	    		customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		if (customerResponse.getStatusLine().getStatusCode()==200) {
+	    			customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		} else {
+	    			logger.error("Impossible de créer le customer (HTTP " + customerResponse.getStatusLine().getStatusCode() + ")");
+	    		}
 	    	} else { // create
 	    		final HttpPost httpRequest = new HttpPost(url);
 	    		httpRequest.setEntity(new StringEntity(objectMapper.writeValueAsString(customer)));
 	    		CloseableHttpResponse customerResponse = httpclient.execute(httpRequest);
-	    		customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		
+	    		if (customerResponse.getStatusLine().getStatusCode()==201) {
+		    		customer = objectMapper.readValue(customerResponse.getEntity().getContent(), new TypeReference<Customer>() { });
+	    		} else {
+	    			logger.error("Impossible de créer le customer (HTTP " + customerResponse.getStatusLine().getStatusCode() + ")");
+	    		}
 	    	}
     	} catch(final IOException ioe) {
     		logger.error("Impossible de contacter le backend customer.");
