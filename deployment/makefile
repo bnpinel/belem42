@@ -24,3 +24,8 @@ destroy-all:
 	kubectl delete -f ../../back-card/deployment/deployment.yml
 	kubectl delete -f ../../back-payment/deployment/deployment.yml
 
+network-policies:
+	kubectl create -f ./network-policy.yml
+
+destroy-policies:
+	kubectl delete -f ./network-policy.yml
