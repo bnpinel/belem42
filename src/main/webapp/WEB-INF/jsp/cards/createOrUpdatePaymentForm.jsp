@@ -28,7 +28,7 @@
             </thead>
             <tr>
                 <td><c:out value="${payment.card.name}"/></td>
-                <td><containerbank:localDate date="${payment.card.birthDate}" pattern="yyyy/MM/dd"/></td>
+                <td><c:out value="${payment.card.birthDate}"/></td>
                 <td><c:out value="${payment.card.type.name}"/></td>
                 <td><c:out value="${payment.card.customer.firstName} ${payment.card.customer.lastName}"/></td>
             </tr>
@@ -58,7 +58,7 @@
             <c:forEach var="payment" items="${payment.card.payments}">
                 <c:if test="${!payment['new']}">
                     <tr>
-                        <td><containerbank:localDate date="${payment.date}" pattern="yyyy/MM/dd"/></td>
+                        <td><c:out value="${payment.date}"/></td>
                         <td><c:out value="${payment.description}"/></td>
                     </tr>
                 </c:if>

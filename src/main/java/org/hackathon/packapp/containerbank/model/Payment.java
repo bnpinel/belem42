@@ -41,7 +41,7 @@ public class Payment extends BaseEntity {
      * Creates a new instance of Payment for the current date
      */
     public Payment() {
-    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/DD");
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         this.date = LocalDate.now().format(formatter);
     }
 

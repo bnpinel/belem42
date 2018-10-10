@@ -50,7 +50,7 @@ public class PaymentController {
      * @return Card
      */
     @ModelAttribute("payment")
-    public Payment loadCardWithPayment(@PathVariable("cardId") int cardId) {
+    public Payment loadCardWithPayment(@PathVariable("cardId") String cardId) {
         Card card = this.bankService.findCardById(cardId);
         Payment payment = new Payment();
         card.addPayment(payment);
@@ -59,7 +59,7 @@ public class PaymentController {
 
     // Spring MVC calls method loadCardWithPayment(...) before initNewPaymentForm is called
     @RequestMapping(value = "/customers/*/cards/{cardId}/payments/new", method = RequestMethod.GET)
-    public String initNewPaymentForm(@PathVariable("cardId") int cardId, Map<String, Object> model) {
+    public String initNewPaymentForm(@PathVariable("cardId") String cardId, Map<String, Object> model) {
         return "cards/createOrUpdatePaymentForm";
     }
 
@@ -75,7 +75,7 @@ public class PaymentController {
     }
 
     @RequestMapping(value = "/customers/*/cards/{cardId}/payments", method = RequestMethod.GET)
-    public String showPayments(@PathVariable int cardId, Map<String, Object> model) {
+    public String showPayments(@PathVariable String cardId, Map<String, Object> model) {
         model.put("payments", this.bankService.findCardById(cardId).getPayments());
         return "paymentList";
     }
