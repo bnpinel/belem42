@@ -52,6 +52,13 @@ public class BankServiceImpl implements BankService {
     private AdvisorRepository advisorRepository;
     private CustomerRepository customerRepository;
     private PaymentRepository paymentRepository;
+    
+    private String paymentUrl = "http://localhost:9092";
+    private String advisorUrl = "http://localhost:9090";
+    private String customerUrl = "http://localhost:9091";
+    private String cardUrl = "http://localhost:9093";
+    
+    private final String BACK_URL = System.getenv("BACKEND_URL");
 
 	final Logger logger = LoggerFactory.getLogger(BankServiceImpl.class);
 
@@ -62,6 +69,17 @@ public class BankServiceImpl implements BankService {
         this.advisorRepository = advisorRepository;
         this.customerRepository = customerRepository;
         this.paymentRepository = paymentRepository;
+        if (BACK_URL == null) {
+        	this.paymentUrl = "http://localhost:9092";
+        	this.advisorUrl = "http://localhost:9090";
+        	this.customerUrl = "http://localhost:9091";
+        	this.cardUrl = "http://localhost:9093";
+        }else {
+        	this.paymentUrl = "http://belem42.hackathon-container.com";
+        	this.advisorUrl = "http://belem42.hackathon-container.com";
+        	this.customerUrl = "http://belem42.hackathon-container.com";
+        	this.cardUrl = "http://belem42.hackathon-container.com";
+        }
     }
 
     @Override
@@ -69,7 +87,7 @@ public class BankServiceImpl implements BankService {
     public Collection<CardType> findCardTypes() throws DataAccessException {
     	
     	CloseableHttpClient httpclient = HttpClients.createDefault();
-    	HttpGet httpGet = new HttpGet("http://localhost:9093/cardtype");
+    	HttpGet httpGet = new HttpGet(this.cardUrl+"/cardtype");
     	ObjectMapper objectMapper = new ObjectMapper();
     	Collection<CardType> cardtypelist = null;
     	try {
@@ -88,7 +106,7 @@ public class BankServiceImpl implements BankService {
     @Transactional(readOnly = true)
     public Customer findCustomerById(final String id) {
     	final CloseableHttpClient httpclient = HttpClients.createDefault();
-    	final HttpGet httpGet = new HttpGet("http://localhost:9091/customers/" + id);    	
+    	final HttpGet httpGet = new HttpGet(this.customerUrl+"/customers/" + id);    	
     	final ObjectMapper objectMapper = new ObjectMapper();
     	Customer customer = null;
     	try {
@@ -101,7 +119,7 @@ public class BankServiceImpl implements BankService {
 		}
     	
     	// Populate object with cards
-    	HttpGet httpGetCards = new HttpGet("http://localhost:9093/card/customer/" + id);
+    	HttpGet httpGetCards = new HttpGet(this.cardUrl+"/card/customer/" + id);
     	ObjectMapper objectMapperCards = new ObjectMapper();
     	Collection<Card> cards = null;
     	try {
@@ -174,7 +192,7 @@ public class BankServiceImpl implements BankService {
     @Transactional(readOnly = true)
     public Collection<Customer> findCustomerByLastName(String lastName) {
     	final CloseableHttpClient httpclient = HttpClients.createDefault();
-    	final HttpGet httpGet = new HttpGet("http://localhost:9091/customers/?name=" + lastName);
+    	final HttpGet httpGet = new HttpGet(this.customerUrl+"/customers/?name=" + lastName);
     	final ObjectMapper objectMapper = new ObjectMapper();
     	Collection<Customer> customers = null;
     	try {
@@ -195,7 +213,7 @@ public class BankServiceImpl implements BankService {
     	final List<Header> headers = Arrays.asList(new Header[] {header});
     	final CloseableHttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).build();
     	final ObjectMapper objectMapper = new ObjectMapper();
-    	final String url = "http://localhost:9091/customers/";
+    	final String url = this.customerUrl+"/customers/";
     	
     	try {
 	    	// update
@@ -259,7 +277,7 @@ public class BankServiceImpl implements BankService {
     @Transactional(readOnly = true)
     public Card findCardById(int id) {
     	CloseableHttpClient httpclient = HttpClients.createDefault();
-    	HttpGet httpGet = new HttpGet("http://localhost:9093/card/" + id);
+    	HttpGet httpGet = new HttpGet(this.cardUrl+"/card/" + id);
     	ObjectMapper objectMapper = new ObjectMapper();
     	Card card = null;
     	try {
@@ -287,7 +305,7 @@ public class BankServiceImpl implements BankService {
     		
     		// POST
     		
-        	HttpPost httpPost = new HttpPost("http://localhost:9093/card");
+        	HttpPost httpPost = new HttpPost(this.cardUrl+"/card");
         	ObjectMapper objectMapper = new ObjectMapper();
         	try {
      		
@@ -318,7 +336,7 @@ public class BankServiceImpl implements BankService {
     		
     		//PUT
     		
-        	HttpPut httpPut = new HttpPut("http://localhost:9093/card/" + card.getId());
+        	HttpPut httpPut = new HttpPut(this.cardUrl+"/card/" + card.getId());
         	ObjectMapper objectMapper = new ObjectMapper();
         	try {
         		httpPut.setEntity(new StringEntity(objectMapper.writeValueAsString(card)));
@@ -350,7 +368,7 @@ public class BankServiceImpl implements BankService {
     public Collection<Advisor> findAdvisors() throws DataAccessException {
     	logger.debug("entering find avisors");
     	CloseableHttpClient httpclient = HttpClients.createDefault();
-    	HttpGet httpGet = new HttpGet("http://localhost:9090/advisor");
+    	HttpGet httpGet = new HttpGet(this.advisorUrl + "/advisor");
     	ObjectMapper objectMapper = new ObjectMapper();
     	Collection<Advisor> advisors = null;
     	try {
