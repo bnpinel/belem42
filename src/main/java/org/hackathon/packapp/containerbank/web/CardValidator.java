@@ -28,7 +28,7 @@ public class CardValidator implements Validator {
         }
 
         // type validation
-        if (card.isNew() && card.getCardTypeID() == null) {
+        if (card.isNew() && (card.getCardTypeID() == null && card.getType() == null)) {
             errors.rejectValue("type", REQUIRED, REQUIRED);
         }
 

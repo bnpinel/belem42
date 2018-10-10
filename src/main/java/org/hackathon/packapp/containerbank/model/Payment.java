@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Simple JavaBean domain object representing a payment.
@@ -21,17 +22,15 @@ public class Payment extends BaseEntity {
     /**
      * Holds value of property date.
      */
-    @Column(name = "payment_date")
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    private LocalDate date;
+    private String date;
 
     /**
      * Holds value of property description.
      */
     @NotEmpty
-    @Column(name = "description")
     private String description;
-
+    
     /**
      * Holds value of property card.
      */
@@ -42,7 +41,8 @@ public class Payment extends BaseEntity {
      * Creates a new instance of Payment for the current date
      */
     public Payment() {
-        this.date = LocalDate.now();
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/DD");
+        this.date = LocalDate.now().format(formatter);
     }
 
 
@@ -51,7 +51,7 @@ public class Payment extends BaseEntity {
      *
      * @return Value of property date.
      */
-    public LocalDate getDate() {
+    public String getDate() {
         return this.date;
     }
 
@@ -60,7 +60,7 @@ public class Payment extends BaseEntity {
      *
      * @param date New value of property date.
      */
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

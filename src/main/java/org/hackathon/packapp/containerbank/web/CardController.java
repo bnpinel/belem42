@@ -65,6 +65,7 @@ public class CardController {
         if (StringUtils.hasLength(card.getName()) && card.isNew() && customer.getCard(card.getName(), true) != null){
             result.rejectValue("name", "duplicate", "already exists");
         }
+        
         if (result.hasErrors()) {
             model.put("card", card);
             return VIEWS_cards_CREATE_OR_UPDATE_FORM;

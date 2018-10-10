@@ -19,6 +19,8 @@ import org.springframework.format.annotation.DateTimeFormat;
  */
 public class Card extends NamedEntity {
 
+	private String id;
+	
 	@DateTimeFormat(pattern = "yyyy/MM/dd")
     private String birthDate;
 
@@ -109,6 +111,14 @@ public class Card extends NamedEntity {
 
 	public void setPaymentIDList(List<String> paymentIDList) {
 		this.paymentIDList = paymentIDList;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	
