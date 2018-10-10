@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: belem42-deployment
+  namespace: packapp04
+spec:
+  selector:
+    matchLabels:
+      app: belem42
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: belem42
+    spec:
+      containers:
+      - name: belem42
+        image: registry.hackathon-container.com/packapp04/belem42:0.4
+        ports:
+        - containerPort: 8080
+        env:
+        - name: BACKEND_URL
+          value: "http://belem42.hackathon-container.com"
+      imagePullSecrets:
+      - name: registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: belem42-svc
+  namespace: packapp04
+spec:
+  type: ClusterIP
+  selector:
+    app: belem42
+  ports:
+  - name: belem42-ports 
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: belem42-ingress
+  namespace: packapp04
+spec:
+  rules:
+  - host: belem42.hackathon-container.com
+    http:
+      paths:
+      - backend:
+          serviceName: belem42-svc
+          servicePort: 8080
+      - path: /advisor
+        backend:
+          serviceName: back-advisor-svc
+          servicePort: 9090
+      - path: /customers
+        backend:
+          serviceName: back-customer-svc
+          servicePort: 9091
+      - path: /payment
+        backend:
+          serviceName: back-payment-svc
+          servicePort: 9092
+      - path: /card
+        backend:
+          serviceName: back-card-svc
+          servicePort: 9093
+
