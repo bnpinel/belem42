@@ -285,12 +285,13 @@ public class BankServiceImpl implements BankService {
 				Card card = findCardById(cardID);
 				
 				if (card.getPaymentIDList()==null) card.setPaymentIDList(new ArrayList<String>());
+				
 				card.getPaymentIDList().add(paymentID);
 				card.setCardTypeID(card.getType().getId());
 				card.setCustomerID(card.getCustomer().getId());
 				card.setType(null);
 				card.setCustomer(null);
-				card.setPayments(null);
+				card.setPayments(null);			
 				saveCard(card);
 			}
     			
@@ -411,6 +412,15 @@ public class BankServiceImpl implements BankService {
     	} else {
     		
     		//PUT
+
+			if(card.getCardTypeID()==null) card.setCardTypeID(card.getType().getId());
+    		if(card.getPaymentIDList()==null && card.getPayments()!=null) {
+    			card.setPaymentIDList(new ArrayList<String>());
+    			for (Iterator<Payment> iterator = card.getPayments().iterator(); iterator.hasNext();) {
+    				Payment payment = (Payment) iterator.next(); 
+    				card.getPaymentIDList().add(payment.getId());
+				}
+    		}   		
     		
         	HttpPut httpPut = new HttpPut(this.cardUrl+"/card/" + card.getId());
         	ObjectMapper objectMapper = new ObjectMapper();
