@@ -26,6 +26,8 @@ public class Card extends NamedEntity {
 
     private String customerID;
     
+    private List<String> paymentIDList;
+    
     private CardType type;
     
     private Customer customer;
@@ -99,6 +101,14 @@ public class Card extends NamedEntity {
 
 	public void setType(CardType type) {
 		this.type = type;
+	}
+
+	public List<String> getPaymentIDList() {
+		return paymentIDList;
+	}
+
+	public void setPaymentIDList(List<String> paymentIDList) {
+		this.paymentIDList = paymentIDList;
 	}
 
 	

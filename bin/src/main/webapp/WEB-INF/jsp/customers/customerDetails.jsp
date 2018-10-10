@@ -52,7 +52,7 @@
                         <dt>Name</dt>
                         <dd><c:out value="${card.name}"/></dd>
                         <dt>Birth Date</dt>
-                        <dd><containerbank:localDate date="${card.birthDate}" pattern="yyyy-MM-dd"/></dd>
+                        <dd><c:out value="${card.birthDate}"/></dd>
                         <dt>Type</dt>
                         <dd><c:out value="${card.type.name}"/></dd>
                     </dl>
