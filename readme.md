@@ -7,11 +7,12 @@
 ## Pourquoi Belem42 ?
 Bah... c'est simple, le Belem est un des premiers portes conteneurs, bien avant Mesos, Swarm ou Kubernetes ! Et 42 car c'est la réponse à la question.
 
+<p align="center">
  <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme_belem.png"
-	align="center"
     alt="Le Belem"
     width="70%" />
-     
+</p>
+
 ## L'équipe
 
 TODO photo de l'équipe avec les Tshirt
