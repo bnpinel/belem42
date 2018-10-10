@@ -2,6 +2,9 @@
 
 
 
+
+
+
 # Bienvenue sur l'application Hackathon PackApp de l'équipe Belem42 !
 
 ## Pourquoi Belem42 ?
@@ -38,6 +41,11 @@ Dans un premier temps nous avons décidé de conserver le front jsp et nous l'av
 TODO : à compléter
 
 
+## Architecture Technique
+
+
+
+
 ## Use cases couverts
 
 - [X] `ViewAdvisors` : voir une liste de conseillers et leurs spécialités (none, savings, credits ou insurance)<br/>
@@ -51,6 +59,10 @@ TODO : à compléter
 - [X] `AddPayment` : ajouter des informations relatives à un paiement (nature du paiement)<br/>
 - [ ] `Monitoring` : monitorer chaque appels et leur durée<br/>
 - [ ] `Logging` : centraliser les logs de l'application
+
+
+## Ce que l'on aurait aimé faire avec plus de temps
+
 
 ## build
 mvn clean package

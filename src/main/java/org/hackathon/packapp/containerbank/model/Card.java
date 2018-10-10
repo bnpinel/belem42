@@ -59,6 +59,10 @@ public class Card extends NamedEntity {
         payment.setCard(this);
     }
     
+    public boolean isNew() {
+        return this.id == null;
+    }
+    
     
 
     public void setBirthDate(String birthDate) {
