@@ -15,17 +15,15 @@ spec:
     spec:
       containers:
       - name: prometheus
-        image: prom/prometheus
-        command:
+        image: registry.hackathon-container.com/packapp04/promethues-belem42:1.0
+        ports:
+        - containerPort: 9090
+        args:
         - "--config.file=/etc/prometheus/prometheus.yml"
         - "--storage.tsdb.path=/prometheus"
         - "--web.console.libraries=/usr/share/prometheus/console_libraires"
         - "--web.console.templates=/usr/share/prometheus/consoles"
-        ports:
-        - containerPort: 9090
         volumeMounts:
-        - mountPath: /etc/prometheus/prometheus.yml
-          name: prometheus-config
         - mountPath: /prometheus
           name: prometheus-dir
       - name: grafana
@@ -49,10 +47,6 @@ spec:
         - mountPath: /app/list/data/grafana
           name: grafana-dir
       volumes:
-      - name: prometheus-config
-        hostPath: 
-          path: prometheus.yml
-          type: FileOrCreate
       - name: prometheus-dir
         hostPath: 
           path: prometheus_data
@@ -138,3 +132,31 @@ spec:
       - backend:
           serviceName: back-card-svc
           servicePort: 9093
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-prometheus-ingress
+  namespace: packapp04
+spec:
+  rules:
+  - host: prometheus-belem42.hackathon-container.com
+    http:
+      paths:
+      - backend:
+          serviceName: monitoring-svc
+          servicePort: 9999
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-grafana-ingress
+  namespace: packapp04
+spec:
+  rules:
+  - host: grafana-belem42.hackathon-container.com
+    http:
+      paths:
+      - backend:
+          serviceName: monitoring-svc
+          servicePort: 3000
