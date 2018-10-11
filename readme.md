@@ -34,6 +34,17 @@ Comme base de données conteneur ready, nous avons choisi mongoDB car nous l'uti
 Dans un premier temps nous avons décidé de conserver le front jsp et nous l'avons modifié pour qu'il invoque les micro-services.
 Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 
+Pour la construction des images docker embarquant le front et les API (sources Dockerfile disponibles dans chacun des repo), nous avons essayé de minimiser la taille en se basant sur des versions alpine des images proposées dans le repo "library" de dockerhub (java, tomcat).
+
+De plus, les microservices développés essayent de respecter au mieux le pattern 12 factors :
+
+- Ne pas se reposer sur le FS
+- Stateless
+- Loging dans l'output
+- Versionning du code (code applicatif, Dockerfile, Descripteur de déploiement...)
+- Un début de process de release (standardisation du build, du déploiement...)
+ 
+
 ## URL
 
 - Application : http://belem42.hackathon-container.com/containerbank/
@@ -69,12 +80,17 @@ Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 
 - Mettre en place des volumes persistants sur MongoDB
 - Mettre en oeuvre des replicaset MongoDB par back-end (pour l'instant un seul conteneur mongo)
+- Terminer le refacto du front en supprimant toutes les références JPA/Hibernate
 - Remplacer le front JSP/spring par un front statique (Angular)
 - Mettre en place de l'autoscalling
 - Centraliser les logs avec Graylog
 - Persister les dashboards grafana
 - Monitorer les fronts et les mongo
 - Automatiser la création des data minimum pour démarrer (card type et advisors)
+- Gérer la configuration applicative via des config et secrets k8s
+- Swagger des API
+- Sécuriser les backends et la configuration mongo (mitigé par l'impossibilité d'accès externe au namespace).
+- ...
 
 
 
