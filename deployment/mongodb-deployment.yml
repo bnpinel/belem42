@@ -25,15 +25,9 @@ metadata:
   name: mongodb
   namespace: packapp04
   labels:
-    name: mongo
     app: mongodb
 spec:
   selector:
-    name: mongo
     app: mongodb
   ports:
-  - name: mongodb
-    port: 27017
-    targetPort: 27017
-    nodePort: 31017
-  type: NodePort
+  - port: 27017

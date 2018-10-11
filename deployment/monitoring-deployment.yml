@@ -1,0 +1,140 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-deployment
+  namespace: packapp04
+spec:
+  selector:
+    matchLabels:
+      app: monitoring
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: monitoring
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/prometheus
+        command:
+        - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--storage.tsdb.path=/prometheus"
+        - "--web.console.libraries=/usr/share/prometheus/console_libraires"
+        - "--web.console.templates=/usr/share/prometheus/consoles"
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - mountPath: /etc/prometheus/prometheus.yml
+          name: prometheus-config
+        - mountPath: /prometheus
+          name: prometheus-dir
+      - name: grafana
+        image: grafana/grafana
+        ports:
+        - containerPort: 3000
+        env:
+        - name: GF_PATHS_CONFIG
+          value: "/etc/grafana/grafana.ini"
+        - name: GF_PATHS_DATA
+          value: "/var/lib/grafana"
+        - name: GF_PATHS_HOME
+          value: "/usr/share/grafana"
+        - name: GF_PATHS_LOGS
+          value: "/var/log/grafana"
+        - name: GF_PATHS_PLUGINS
+          value: "/var/lib/grafana/plugins"
+        - name: GF_PATHS_PROVISIONING
+          value: "/etc/grafana/provisioning"
+        volumeMounts:
+        - mountPath: /app/list/data/grafana
+          name: grafana-dir
+      volumes:
+      - name: prometheus-config
+        hostPath: 
+          path: prometheus.yml
+          type: FileOrCreate
+      - name: prometheus-dir
+        hostPath: 
+          path: prometheus_data
+          type: DirectoryOrCreate
+      - name: grafana-dir
+        hostPath: 
+          path: grafana_data
+          type: DirectoryOrCreate
+      imagePullSecrets:
+      - name: registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-svc
+  namespace: packapp04
+spec:
+  type: ClusterIP
+  selector:
+    app: monitoring
+  ports:
+  - name: prometheus 
+    port: 9999
+    targetPort: 9090
+    protocol: TCP
+  - name: grafana
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-advisor-ingress
+  namespace: packapp04
+spec:
+  rules:
+  - host: monitoring-advisor.hackathon-container.com
+    http:
+      paths:
+      - backend:
+          serviceName: back-advisor-svc
+          servicePort: 9090
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-customer-ingress
+  namespace: packapp04
+spec:
+  rules:
+  - host: monitoring-customer.hackathon-container.com
+    http:
+      paths:
+      - backend:
+          serviceName: back-customer-svc
+          servicePort: 9091
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-payment-ingress
+  namespace: packapp04
+spec:
+  rules:
+  - host: monitoring-payment.hackathon-container.com
+    http:
+      paths:
+      - backend:
+          serviceName: back-payment-svc
+          servicePort: 9092
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-card-ingress
+  namespace: packapp04
+spec:
+  rules:
+  - host: monitoring-card.hackathon-container.com
+    http:
+      paths:
+      - backend:
+          serviceName: back-card-svc
+          servicePort: 9093

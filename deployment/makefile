@@ -29,3 +29,9 @@ network-policies:
 
 destroy-policies:
 	kubectl delete -f ./network-policy.yml
+
+deploy-monitoring:
+	kubectl create -f ./monitoring-deployment.yml
+
+destroy-monitoring:
+	kubectl delete -f ./monitoring-deployment.yml
