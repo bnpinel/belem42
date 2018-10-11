@@ -11,13 +11,16 @@ Bah... c'est simple, le Belem est un des premiers portes conteneurs, bien avant 
 
 ## L'équipe
 
-TODO photo de l'équipe avec les Tshirt
+<p align="center">
+ <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme_team.jpg"
+    alt="La Team"
+    width="70%" />
 
 De gauche à droite :
-* Jean-Louis Etienne
-* Julien Vinet
 * Benjamin Pinel
 * Fabien Hippolyte
+* Jean-Louis Etienne
+* Julien Vinet
 
 Toute l'équipe est issue du pôle Usine Logicielle LCL
 
@@ -29,9 +32,8 @@ A fond, à fond, à fond, comme à l'Usine Logicielle ! :grimacing:
 Avant d'attaquer la partie déploiement sur AWS, nous avons commencé par créer des micro-services REST/json avec spring-boot pour séparer le front-end du back-end.
 Comme base de données conteneur ready, nous avons choisi mongoDB car nous l'utilisons au quotidien sur l'usine logicielle LCL, sous Docker, nous maitrisons cette technologie et elle donne de bons résultats.
 Dans un premier temps nous avons décidé de conserver le front jsp et nous l'avons modifié pour qu'il invoque les micro-services.
+Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 
-
-TODO : à compléter
 
 
 ## Architecture Technique
@@ -50,7 +52,7 @@ TODO : à compléter
 - [X] `AddCard` : ajouter une nouvelle carte bleue au système<br/>
 - [X] `ViewPayment` : voir des informations relatives à l'historique de paiement d’une carte bleue<br/>
 - [X] `AddPayment` : ajouter des informations relatives à un paiement (nature du paiement)<br/>
-- [ ] `Monitoring` : monitorer chaque appels et leur durée<br/>
+- [X] `Monitoring` : monitorer chaque appels et leur durée<br/>
 - [ ] `Logging` : centraliser les logs de l'application
 
 
@@ -59,7 +61,9 @@ TODO : à compléter
 - Mettre en place des volumes persistants sur MongoDB
 - Remplacer le front JSP/spring par un front statique (Angular)
 - Mettre en place de l'autoscalling
-- Persister les logs
+- Centraliser les logs avec Graylog
+- Persister les dashboards grafana
+- Automatiser la création des data minimum pour démarrer (card type et advisors)
 
 
 
