@@ -68,4 +68,20 @@ mvn clean package
 
 ## Launch
 mvn tomcat7:run-war
+
+## Deployer l'application
+L'ensemble des fichiers de déploiement kubernetes se trouve dans le dossier "deployment" de chaque projet. Un fichier makefile, contenant les directives `deploy` et `destroy` permet de réaliser les commandes :
+
+	make deploy
+Déploie la stack du projet dans le cluster kubernetes
+
+	make destroy
+Détruit la stack du projet dans le cluster kubernetes
+
+### Premier déploiement
+
+	cd ./belem42/deployment/
+	make deploy-mongodb
+	make deploy-all
+	make deploy-monitoring
     
