@@ -34,9 +34,13 @@ Comme base de données conteneur ready, nous avons choisi mongoDB car nous l'uti
 Dans un premier temps nous avons décidé de conserver le front jsp et nous l'avons modifié pour qu'il invoque les micro-services.
 Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 
+## URL
+
+Application : http://belem42.hackathon-container.com/containerbank/
+Grafana : http://grafana-belem42.hackathon-container.com
 
 
-## Architecture Technique
+## Architecture Technique cible
 
 <p align="center">
  <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme_archi.png"
@@ -58,11 +62,13 @@ Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 - [X] `Monitoring` : monitorer chaque appels et leur durée<br/>
 - [ ] `Logging` : centraliser les logs de l'application
 
+( ne pas mettre d'accents dans les champs texte ;) )
+
 
 ## Ce que l'on aurait aimé faire avec plus de temps
 
 - Mettre en place des volumes persistants sur MongoDB
-- Mettre en oeuvre des replicaset MongoDB
+- Mettre en oeuvre des replicaset MongoDB par back-end (pour l'instant un seul conteneur mongo)
 - Remplacer le front JSP/spring par un front statique (Angular)
 - Mettre en place de l'autoscalling
 - Centraliser les logs avec Graylog
