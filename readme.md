@@ -63,6 +63,7 @@ TODO : à compléter
 - Mettre en place de l'autoscalling
 - Centraliser les logs avec Graylog
 - Persister les dashboards grafana
+- Automatiser la création des data minimum pour démarrer (card type et advisors)
 
 
 
