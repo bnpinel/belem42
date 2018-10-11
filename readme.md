@@ -1,8 +1,3 @@
-# belem42
-
-
-
-
 # Bienvenue sur l'application Hackathon PackApp de l'équipe Belem42 !
 
 ## Pourquoi Belem42 ?
@@ -61,6 +56,7 @@ TODO : à compléter
 
 ## Ce que l'on aurait aimé faire avec plus de temps
 
+- Mettre en place des volumes persistants sur MongoDB
 - Remplacer le front JSP/spring par un front statique (Angular)
 - Mettre en place de l'autoscalling
 - Persister les logs
