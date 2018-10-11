@@ -67,25 +67,46 @@ TODO : à compléter
 
 
 
-## build
+## Tooling
+### Local
+##### build
+```
 mvn clean package
+```
 
-## Launch
+##### Launch
+```
 mvn tomcat7:run-war
+```
 
-## Deployer l'application
+### k8s
+##### Builder les containers
+Chaque projet (front + backs ends) contient un fichier build.sh permettant de créer un container, et accessoirement de le tagger
+
+```
+./build.sh $version [tag]
+```
+
+Indiquer l'option **tag** permettra de générer l'image puis de la push dans la registry.
+
+##### Deployer l'application
 L'ensemble des fichiers de déploiement kubernetes se trouve dans le dossier "deployment" de chaque projet. Un fichier makefile, contenant les directives `deploy` et `destroy` permet de réaliser les commandes :
 
-	make deploy
+```
+make deploy
+```
 Déploie la stack du projet dans le cluster kubernetes
 
-	make destroy
+```
+make destroy
+```
 Détruit la stack du projet dans le cluster kubernetes
 
-### Premier déploiement
+##### Premier déploiement
+```
+cd ./belem42/deployment/
+make deploy-mongodb
+make deploy-all
+make deploy-monitoring
 
-	cd ./belem42/deployment/
-	make deploy-mongodb
-	make deploy-all
-	make deploy-monitoring
-    
+```
