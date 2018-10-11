@@ -38,7 +38,10 @@ Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 
 ## Architecture Technique
 
-TODO : à compléter
+<p align="center">
+ <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme_archi.jpg"
+    alt="Archi"
+    width="70%" />
 
 
 ## Use cases couverts
@@ -59,33 +62,56 @@ TODO : à compléter
 ## Ce que l'on aurait aimé faire avec plus de temps
 
 - Mettre en place des volumes persistants sur MongoDB
+- Mettre en oeuvre des replicaset MongoDB
 - Remplacer le front JSP/spring par un front statique (Angular)
 - Mettre en place de l'autoscalling
 - Centraliser les logs avec Graylog
 - Persister les dashboards grafana
+- Monitorer les fronts et les mongo
 - Automatiser la création des data minimum pour démarrer (card type et advisors)
 
 
 
-## build
+## Tooling
+### Local
+##### build
+```
 mvn clean package
+```
 
-## Launch
+##### Launch
+```
 mvn tomcat7:run-war
+```
 
-## Deployer l'application
+### k8s
+##### Builder les containers
+Chaque projet (front + backs ends) contient un fichier build.sh permettant de créer un container, et accessoirement de le tagger
+
+```
+./build.sh $version [tag]
+```
+
+Indiquer l'option **tag** permettra de générer l'image puis de la push dans la registry.
+
+##### Deployer l'application
 L'ensemble des fichiers de déploiement kubernetes se trouve dans le dossier "deployment" de chaque projet. Un fichier makefile, contenant les directives `deploy` et `destroy` permet de réaliser les commandes :
 
-	make deploy
+```
+make deploy
+```
 Déploie la stack du projet dans le cluster kubernetes
 
-	make destroy
+```
+make destroy
+```
 Détruit la stack du projet dans le cluster kubernetes
 
-### Premier déploiement
+##### Premier déploiement
+```
+cd ./belem42/deployment/
+make deploy-mongodb
+make deploy-all
+make deploy-monitoring
 
-	cd ./belem42/deployment/
-	make deploy-mongodb
-	make deploy-all
-	make deploy-monitoring
-    
+```
