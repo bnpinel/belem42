@@ -36,8 +36,8 @@ Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 
 ## URL
 
-Application : http://belem42.hackathon-container.com/containerbank/
-Grafana : http://grafana-belem42.hackathon-container.com
+- Application : http://belem42.hackathon-container.com/containerbank/
+- Grafana : http://grafana-belem42.hackathon-container.com
 
 
 ## Architecture Technique cible
