@@ -13,7 +13,7 @@ Bah... c'est simple, le Belem est un des premiers portes conteneurs, bien avant 
 
 <p align="center">
  <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme_team.jpg"
-    alt="Le Belem"
+    alt="La Team"
     width="70%" />
 
 De gauche à droite :
