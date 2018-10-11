@@ -52,7 +52,7 @@ TODO : à compléter
 - [X] `AddCard` : ajouter une nouvelle carte bleue au système<br/>
 - [X] `ViewPayment` : voir des informations relatives à l'historique de paiement d’une carte bleue<br/>
 - [X] `AddPayment` : ajouter des informations relatives à un paiement (nature du paiement)<br/>
-- [ ] `Monitoring` : monitorer chaque appels et leur durée<br/>
+- [X] `Monitoring` : monitorer chaque appels et leur durée<br/>
 - [ ] `Logging` : centraliser les logs de l'application
 
 
