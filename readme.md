@@ -67,6 +67,7 @@ Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 - Mettre en place de l'autoscalling
 - Centraliser les logs avec Graylog
 - Persister les dashboards grafana
+- Monitorer les fronts et les mongo
 - Automatiser la création des data minimum pour démarrer (card type et advisors)
 
 
