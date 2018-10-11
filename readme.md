@@ -38,7 +38,10 @@ Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 
 ## Architecture Technique
 
-TODO : à compléter
+<p align="center">
+ <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme_archi.jpg"
+    alt="Archi"
+    width="70%" />
 
 
 ## Use cases couverts
@@ -59,6 +62,7 @@ TODO : à compléter
 ## Ce que l'on aurait aimé faire avec plus de temps
 
 - Mettre en place des volumes persistants sur MongoDB
+- Mettre en oeuvre des replicaset MongoDB
 - Remplacer le front JSP/spring par un front statique (Angular)
 - Mettre en place de l'autoscalling
 - Centraliser les logs avec Graylog
