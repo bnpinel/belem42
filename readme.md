@@ -39,7 +39,7 @@ Ensuite, nous avons attaqué la partie déploiement sur Kubernetes
 ## Architecture Technique
 
 <p align="center">
- <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme_archi.jpg"
+ <img src="https://raw.githubusercontent.com/bnpinel/belem42/master/readme_archi.png"
     alt="Archi"
     width="70%" />
 
