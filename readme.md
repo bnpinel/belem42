@@ -3,8 +3,6 @@
 
 
 
-
-
 # Bienvenue sur l'application Hackathon PackApp de l'équipe Belem42 !
 
 ## Pourquoi Belem42 ?
@@ -43,7 +41,7 @@ TODO : à compléter
 
 ## Architecture Technique
 
-
+TODO : à compléter
 
 
 ## Use cases couverts
@@ -62,6 +60,11 @@ TODO : à compléter
 
 
 ## Ce que l'on aurait aimé faire avec plus de temps
+
+- Remplacer le front JSP/spring par un front statique (Angular)
+- Mettre en place de l'autoscalling
+- Persister les logs
+
 
 
 ## build
